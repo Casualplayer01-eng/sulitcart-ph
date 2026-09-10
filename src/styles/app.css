@@ -578,13 +578,13 @@ code {
   color: #4a3b00;
   font-weight: 700;
   clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
-  width: 250px;
-  height: 170px;
-  padding: 0 56px;
+  width: 320px;
+  height: 200px;
+  padding: 0 40px;
   display: grid;
   place-items: center;
   text-align: center;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   line-height: 1.35;
 }
 .hero-diamond b {
