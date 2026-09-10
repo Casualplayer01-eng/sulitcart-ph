@@ -1739,6 +1739,10 @@ code {
   margin-bottom: 20px;
   min-height: 46px;
   flex-wrap: wrap;
+  position: sticky;
+  top: 104px;
+  z-index: 20;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.28);
 }
 
 .viz-caption-step {
@@ -1753,8 +1757,8 @@ code {
 
 .viz-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 26px;
+  grid-template-columns: 250px minmax(0, 1fr) 250px;
+  gap: 22px;
   align-items: start;
 }
 
@@ -1772,6 +1776,7 @@ code {
   gap: 16px;
   position: sticky;
   top: 118px;
+  min-width: 0;
 }
 
 .callout-note {
@@ -1891,8 +1896,23 @@ code {
   padding: 10px 14px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  cursor: pointer;
+  cursor: grab;
   font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  touch-action: none;
+  user-select: none;
+}
+.dock-toggle:active {
+  cursor: grabbing;
+}
+
+.dock-grip {
+  opacity: 0.65;
+  font-size: 0.9rem;
+  letter-spacing: -1px;
 }
 
 .dock-body {
@@ -1916,6 +1936,15 @@ code {
   padding: 22px;
   margin-bottom: 22px;
   border-left: 6px solid var(--accent);
+  scroll-margin-top: 120px;
+}
+
+.explain-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .explain-list {
@@ -2202,6 +2231,15 @@ code {
   }
   .viz-layout {
     grid-template-columns: 1fr;
+  }
+  .viz-flow {
+    order: 1;
+  }
+  .viz-side-left {
+    order: 2;
+  }
+  .viz-side-right {
+    order: 3;
   }
   .viz-side {
     position: static;
