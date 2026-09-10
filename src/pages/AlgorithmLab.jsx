@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartContext.jsx';
 import { formatPHP } from '../utils/checkout.js';
 import AlgorithmVisualizer from '../components/AlgorithmVisualizer.jsx';
@@ -26,10 +26,27 @@ import {
 export default function AlgorithmLab({ go, runSignal, resetSignal, explainSignal, requestRun, requestReset }) {
   const { clear, cartTotal, result } = useCart();
   const [explainOpen, setExplainOpen] = useState(false);
+  const [explainFocus, setExplainFocus] = useState(0);
+  const explainRef = useRef(null);
+
+  // EXPLAIN requests (panel button or floating dock): open AND scroll to it
+  const showExplanation = () => {
+    setExplainOpen(true);
+    setExplainFocus((f) => f + 1);
+  };
 
   useEffect(() => {
-    if (explainSignal > 0) setExplainOpen(true);
+    if (explainSignal > 0) showExplanation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explainSignal]);
+
+  useEffect(() => {
+    if (!explainOpen || explainFocus === 0) return undefined;
+    const t = setTimeout(() => {
+      explainRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+    return () => clearTimeout(t);
+  }, [explainOpen, explainFocus]);
 
   const handleReset = () => {
     clear();
@@ -56,12 +73,14 @@ export default function AlgorithmLab({ go, runSignal, resetSignal, explainSignal
       <DemoControls
         onRun={requestRun}
         onReset={handleReset}
-        onExplain={() => setExplainOpen((o) => !o)}
+        onExplain={showExplanation}
       />
 
       <AlgorithmVisualizer runSignal={runSignal} resetSignal={resetSignal} />
 
-      <ExplanationPanel result={result} open={explainOpen} />
+      <div ref={explainRef}>
+        <ExplanationPanel result={result} open={explainOpen} onClose={() => setExplainOpen(false)} />
+      </div>
 
       <div className="lab-grid">
         <MappingPanel />
