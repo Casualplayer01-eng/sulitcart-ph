@@ -100,11 +100,11 @@ export default function AlgorithmVisualizer({ runSignal, resetSignal }) {
     }
   }, [resetSignal, reset]);
 
-  // Keep the active node visible while the algorithm walks the flowchart
+  // Keep the executing node centered on screen so the eyes never hunt for it
   useEffect(() => {
     if (status !== 'running') return;
     const active = flowRef.current?.querySelector('.is-active');
-    active?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    active?.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }, [step, status]);
 
   const nodeState = (idx) => {
@@ -289,21 +289,7 @@ export default function AlgorithmVisualizer({ runSignal, resetSignal }) {
           <Terminal state={nodeState(9)}>END</Terminal>
         </div>
 
-        <aside className="viz-side">
-          <CalloutNote>
-            <span className="callout-title">NOTE</span>
-            <p>
-              If <em>cart_total</em> ≥ {formatPHP(THRESHOLD)}:
-              <br />
-              10% discount + free shipping.
-            </p>
-            <p>
-              Otherwise:
-              <br />
-              no discount + ₱{SHIPPING_FEE} shipping.
-            </p>
-          </CalloutNote>
-
+        <aside className="viz-side viz-side-right">
           <div className="var-panel card-inner" aria-label="Live variable values">
             <h4>LIVE VARIABLES</h4>
             <dl>
