@@ -27,6 +27,7 @@ export default function AlgorithmLab({ go, runSignal, resetSignal, explainSignal
   const { clear, cartTotal, result } = useCart();
   const [explainOpen, setExplainOpen] = useState(false);
   const [explainFocus, setExplainFocus] = useState(0);
+  const [flash, setFlash] = useState(false);
   const explainRef = useRef(null);
 
   // EXPLAIN requests (panel button or floating dock): open AND scroll to it
@@ -44,8 +45,13 @@ export default function AlgorithmLab({ go, runSignal, resetSignal, explainSignal
     if (!explainOpen || explainFocus === 0) return undefined;
     const t = setTimeout(() => {
       explainRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setFlash(true);
     }, 80);
-    return () => clearTimeout(t);
+    const t2 = setTimeout(() => setFlash(false), 1400);
+    return () => {
+      clearTimeout(t);
+      clearTimeout(t2);
+    };
   }, [explainOpen, explainFocus]);
 
   const handleReset = () => {
@@ -78,7 +84,7 @@ export default function AlgorithmLab({ go, runSignal, resetSignal, explainSignal
 
       <AlgorithmVisualizer runSignal={runSignal} resetSignal={resetSignal} />
 
-      <div ref={explainRef}>
+      <div ref={explainRef} className={flash ? 'flash-once' : ''}>
         <ExplanationPanel result={result} open={explainOpen} onClose={() => setExplainOpen(false)} />
       </div>
 

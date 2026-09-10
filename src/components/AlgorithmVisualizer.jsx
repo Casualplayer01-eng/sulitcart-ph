@@ -289,8 +289,22 @@ export default function AlgorithmVisualizer({ runSignal, resetSignal }) {
           <Terminal state={nodeState(9)}>END</Terminal>
         </div>
 
-        <aside className="viz-side viz-side-right">
-          <div className="var-panel card-inner" aria-label="Live variable values">
+        <aside className="viz-rail" aria-label="Flowchart note and live variables">
+          <CalloutNote className="rail-note">
+            <span className="callout-title">NOTE</span>
+            <p>
+              If <em>cart_total</em> ≥ {formatPHP(THRESHOLD)}:
+              <br />
+              10% discount + free shipping.
+            </p>
+            <p>
+              Otherwise:
+              <br />
+              no discount + ₱{SHIPPING_FEE} shipping.
+            </p>
+          </CalloutNote>
+
+          <div className="var-panel card-inner compact" aria-label="Live variable values">
             <h4>LIVE VARIABLES</h4>
             <dl>
               <div className={step >= 1 ? 'set' : ''}>
