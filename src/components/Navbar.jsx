@@ -48,7 +48,10 @@ export default function Navbar({ route, go, query, setQuery }) {
           <input
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (route !== 'home') go('home'); // search works from every page
+            }}
             placeholder="Search keyboards, notebooks, tumblers…"
             aria-label="Search products"
           />
