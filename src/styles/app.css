@@ -243,9 +243,13 @@ code {
   font-size: 0.78em;
 }
 
-.search {
+.search-wrap {
+  position: relative;
   flex: 1;
   min-width: 190px;
+}
+
+.search {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -269,6 +273,78 @@ code {
   height: 18px;
   color: var(--muted);
   flex: none;
+}
+
+/* live search suggestions */
+.search-suggest {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.16);
+  z-index: 90;
+  overflow: hidden;
+  animation: fadeUp 0.18s ease both;
+}
+
+.suggest-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 14px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.suggest-item:hover,
+.suggest-item:focus-visible {
+  background: #f1f4f9;
+}
+
+.suggest-emoji {
+  font-size: 22px;
+}
+
+.suggest-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.suggest-text strong {
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+.suggest-text small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.suggest-price {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--brand);
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.suggest-empty {
+  padding: 12px 14px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.suggest-foot {
+  padding: 7px 14px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.72rem;
+  background: #fafbfe;
 }
 
 .nav-links {
