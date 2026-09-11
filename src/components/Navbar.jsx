@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartContext.jsx';
+import { PRODUCTS } from '../data/products.js';
 import { THRESHOLD, formatPHP, remainingToThreshold } from '../utils/checkout.js';
 
 const LINKS = [
@@ -9,11 +11,40 @@ const LINKS = [
 ];
 
 /**
- * Professional store header + a live "smart threshold" strip that mirrors
- * the flowchart decision (cart_total >= ₱1,500) at all times.
+ * Professional store header with live search suggestions:
+ * typing shows matching items; clicking one jumps straight to that product.
+ * Also carries the live "smart threshold" strip (cart_total >= ₱1,500).
  */
-export default function Navbar({ route, go, query, setQuery }) {
+export default function Navbar({ route, go, query, setQuery, onSelectProduct }) {
   const { cartTotal, itemCount, result } = useCart();
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  const q = query.trim().toLowerCase();
+  const matches =
+    q === ''
+      ? []
+      : PRODUCTS.filter(
+          (p) =>
+            p.name.toLowerCase().includes(q) ||
+            p.category.toLowerCase().includes(q) ||
+            p.blurb.toLowerCase().includes(q),
+        ).slice(0, 6);
+
+  // close the dropdown when clicking anywhere else
+  useEffect(() => {
+    const onDoc = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, []);
+
+  const pick = (id) => {
+    setOpen(false);
+    onSelectProduct(id);
+  };
+
   const remaining = remainingToThreshold(cartTotal);
   const progress = Math.min(100, (cartTotal / THRESHOLD) * 100);
 
@@ -34,27 +65,60 @@ export default function Navbar({ route, go, query, setQuery }) {
         </button>
 
         <form
-          className="search"
+          className="search-wrap"
           role="search"
           onSubmit={(e) => {
             e.preventDefault();
+            setOpen(false);
             go('home');
           }}
+          ref={wrapRef}
         >
-          <svg viewBox="0 0 24 24" className="search-icon" aria-hidden="true">
-            <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
-            <path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              if (route !== 'home') go('home'); // search works from every page
-            }}
-            placeholder="Search keyboards, notebooks, tumblers…"
-            aria-label="Search products"
-          />
+          <div className="search">
+            <svg viewBox="0 0 24 24" className="search-icon" aria-hidden="true">
+              <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setOpen(true);
+                if (route !== 'home') go('home');
+              }}
+              onFocus={() => setOpen(true)}
+              placeholder="Search keyboards, notebooks, tumblers…"
+              aria-label="Search products"
+              role="combobox"
+              aria-expanded={open && q !== ''}
+              aria-autocomplete="list"
+            />
+          </div>
+
+          {open && q !== '' && (
+            <div className="search-suggest" role="listbox" aria-label="Product suggestions">
+              {matches.length === 0 ? (
+                <div className="suggest-empty">No matches for “{query}” — try another keyword.</div>
+              ) : (
+                <>
+                  {matches.map((p) => (
+                    <button type="button" key={p.id} className="suggest-item" onClick={() => pick(p.id)}>
+                      <span className="suggest-emoji" aria-hidden="true">
+                        {p.emoji}
+                      </span>
+                      <span className="suggest-text">
+                        <strong>{p.name}</strong>
+                        <small>{p.category}</small>
+                      </span>
+                      <span className="suggest-price">{formatPHP(p.price)}</span>
+                    </button>
+                  ))}
+                  <div className="suggest-foot">Tip: press Enter to see all results on the Shop page</div>
+                </>
+              )}
+            </div>
+          )}
         </form>
 
         <nav className="nav-links" aria-label="Primary">

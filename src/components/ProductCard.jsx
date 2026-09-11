@@ -11,13 +11,17 @@ function Stars({ rating }) {
   );
 }
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, flash = false }) {
   const { lines, add, setQty, remove } = useCart();
   const inCart = lines.find((l) => l.product.id === product.id);
   const qty = inCart ? inCart.qty : 0;
 
   return (
-    <article className="product-card card">
+    <article
+      id={`product-${product.id}`}
+      className={`product-card card ${flash ? 'flash-once' : ''}`}
+      style={flash ? { scrollMarginTop: '120px' } : undefined}
+    >
       <div
         className="product-tile"
         style={{
