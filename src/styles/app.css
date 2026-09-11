@@ -1296,13 +1296,14 @@ code {
 }
 
 /* STORE cylinder */
+/* STORE cylinder — text starts below the 32px lid ellipse so nothing overlaps */
 .shape-store {
   width: 250px;
-  min-height: 104px;
+  min-height: 116px;
   background: #ddd1f6;
   border: 2px solid #6d4fc4;
   border-radius: 50% / 16%;
-  padding: 26px 20px 14px;
+  padding: 42px 20px 14px;
 }
 .shape-store::before {
   content: '';
