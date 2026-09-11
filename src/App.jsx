@@ -21,6 +21,7 @@ export default function App() {
   const [runSignal, setRunSignal] = useState(0); // increment => "run algorithm now"
   const [resetSignal, setResetSignal] = useState(0); // increment => "stop + clear highlights"
   const [explainSignal, setExplainSignal] = useState(0);
+  const [focusProduct, setFocusProduct] = useState(null); // { id, ts } => scroll+flash target
 
   const go = useCallback((next) => {
     setRoute(next);
@@ -42,10 +43,24 @@ export default function App() {
     setExplainSignal((n) => n + 1);
   }, []);
 
+  // Search suggestion picked: show Shop with all filters cleared, then jump to the item
+  const selectProduct = useCallback((id) => {
+    setQuery('');
+    setCategory('All');
+    setRoute('home');
+    setFocusProduct({ id, ts: Date.now() });
+  }, []);
+
   return (
     <CartProvider>
       <div className="app-shell">
-        <Navbar route={route} go={go} query={query} setQuery={setQuery} />
+        <Navbar
+          route={route}
+          go={go}
+          query={query}
+          setQuery={setQuery}
+          onSelectProduct={selectProduct}
+        />
 
         <main className="app-main">
           {route === 'home' && (
@@ -55,6 +70,7 @@ export default function App() {
               setQuery={setQuery}
               category={category}
               setCategory={setCategory}
+              focusProduct={focusProduct}
             />
           )}
           {route === 'cart' && <CartPage go={go} />}
