@@ -1,9 +1,22 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PRODUCTS, CATEGORIES } from '../data/products.js';
 import { THRESHOLD, formatPHP } from '../utils/checkout.js';
 import ProductCard from '../components/ProductCard.jsx';
 
-export default function Home({ go, query, setQuery, category, setCategory }) {
+export default function Home({ go, query, setQuery, category, setCategory, focusProduct }) {
+  const [flashId, setFlashId] = useState(null);
+
+  // "Direct me to the item": center the picked product card and flash it
+  useEffect(() => {
+    if (!focusProduct) return undefined;
+    const el = document.getElementById(`product-${focusProduct.id}`);
+    if (!el) return undefined;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setFlashId(focusProduct.id);
+    const t = setTimeout(() => setFlashId(null), 1500);
+    return () => clearTimeout(t);
+  }, [focusProduct]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return PRODUCTS.filter((p) => {
@@ -118,7 +131,7 @@ export default function Home({ go, query, setQuery, category, setCategory }) {
         ) : (
           <div className="product-grid">
             {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} flash={flashId === p.id} />
             ))}
           </div>
         )}
